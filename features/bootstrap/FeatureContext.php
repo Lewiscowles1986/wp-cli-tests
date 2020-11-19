@@ -250,6 +250,17 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		if ( false !== $github_token ) {
 			$env['GITHUB_TOKEN'] = $github_token;
 		}
+
+		$home = getenv( 'HOME' );
+		if ( false !== $home ) {
+			$env['HOME'] = $home;
+		}
+
+		$appdata = getenv( 'APPDATA' );
+		if ( false !== $appdata ) {
+			$env['APPDATA'] = $appdata;
+		}
+
 		return $env;
 	}
 
