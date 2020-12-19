@@ -250,6 +250,17 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		if ( false !== $github_token ) {
 			$env['GITHUB_TOKEN'] = $github_token;
 		}
+
+		$home = getenv( 'HOME' );
+		if ( false !== $home ) {
+			$env['HOME'] = $home;
+		}
+
+		$appdata = getenv( 'APPDATA' );
+		if ( false !== $appdata ) {
+			$env['APPDATA'] = $appdata;
+		}
+
 		return $env;
 	}
 
@@ -767,7 +778,8 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	 * Remove a directory (recursive).
 	 */
 	public static function remove_dir( $dir ) {
-		Process::create( Utils\esc_cmd( 'rm -rf %s', $dir ) )->run_check();
+		$rmdir = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'rmdir /Q /S' : 'rm -rf';
+		Process::create( Utils\esc_cmd( "${rmdir} %s", $dir ) )->run_check();
 	}
 
 	/**
