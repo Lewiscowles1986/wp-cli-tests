@@ -6,7 +6,11 @@ jobs:
 
   lint: #-----------------------------------------------------------------------
     name: Lint PHP files
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out source code
         uses: actions/checkout@v2
@@ -17,13 +21,14 @@ jobs:
         with:
           files: "composer.json"
 
-      - name: Set up PHP envirnoment
+      - name: Set up PHP environment
+        if: steps.check_composer_file.outputs.files_exists == 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
           tools: cs2pr
 
-      - name: Get Composer cache Directory
+      - name: Get Composer cache directory
         if: steps.check_composer_file.outputs.files_exists == 'true'
         id: composer-cache
         run: |
@@ -54,7 +59,7 @@ jobs:
 
   phpcs: #----------------------------------------------------------------------
     name: PHPCS
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Check out source code
@@ -66,13 +71,14 @@ jobs:
         with:
           files: "composer.json, phpcs.xml.dist"
 
-      - name: Set up PHP envirnoment
+      - name: Set up PHP environment
+        if: steps.check_files.outputs.files_exists == 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
           tools: cs2pr
 
-      - name: Get Composer cache Directory
+      - name: Get Composer cache directory
         if: steps.check_files.outputs.files_exists == 'true'
         id: composer-cache
         run: |
