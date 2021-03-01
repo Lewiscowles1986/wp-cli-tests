@@ -60,7 +60,7 @@ jobs:
   functional: #----------------------------------------------------------------------
     name: Functional - WP ${{ matrix.wp }} on PHP ${{ matrix.php }} with MySQL ${{ matrix.mysql }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
         wp: ['latest']
@@ -114,7 +114,10 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
-          --entrypoint sh -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password" 
+          -e MYSQL_ROOT_PASSWORD=root
+          -e MYSQL_PASSWORD=root
+          -e MYSQL_DATABASE=wp_cli_test
+          --entrypoint sh mysql:${{ matrix.mysql }} -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
 
     steps:
       - name: Check out source code
